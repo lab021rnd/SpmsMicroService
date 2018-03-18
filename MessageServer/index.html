@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <script src="scripts/jquery-1.6.4.min.js"></script>
+    <script src="scripts/jquery.signalR-2.2.2.min.js"></script>
+    <script src="/signalr/hubs"></script>
+    <script type="text/javascript">
+
+        $(function () {
+            var logTable = $("#logTable");
+
+            var message = $.connection.messageHub;
+
+            message.client.broadcastMessage = function (datetime, topic, message) {
+
+                if (topic == "Trace") {
+                    var tr = $("<tr>");
+                    tr.append($("<td>").text(datetime));
+                    tr.append($("<td>").text(topic));
+                    tr.append($("<td style='color:blue;white-space: pre;'>").text(message));
+                    logTable.append(tr);
+
+                }
+                else if (topic == "Warn") {
+                    var tr = $("<tr>");
+                    tr.append($("<td>").text(datetime));
+                    tr.append($("<td>").text(topic));
+                    tr.append($("<td style='color:red;white-space: pre;'>").text(message));
+                    logTable.append(tr);
+
+                } else {
+                    var tr = $("<tr>");
+                    tr.append($("<td>").text(datetime));
+                    tr.append($("<td>").text(topic));
+                    tr.append($("<td style='white-space: pre;'>").text(message));
+                    logTable.append(tr);
+
+                }
+
+                console.log("datetime : " + datetime);
+                console.log("topic : " + topic);
+                console.log("message : " + message);
+            }
+
+            $.connection.hub.start().done(function () {
+                message.server.hello();
+                console.log("ddd :" + $.connection.hub.id);
+                //message.server.iot();
+                //$.connection.hub.stop();
+            });
+        });
+    </script>
+</head>
+<body>
+    <table id="logTable" style="font-size:10px"></table>
+</body>
+</html>
+
